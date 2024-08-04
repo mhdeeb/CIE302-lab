@@ -1,28 +1,34 @@
 #include <stdio.h>
 #include <signal.h>
-#include <stdlib.h>
-#include <unistd.h>
 
-void siger(int sig) {
-  printf("hello");
+void handler(int signum);
 
-  // if (sig == SIGUSR1) {
-  //  printf("cont");
-  // } else if (sig == SIGUSR2) {
-  //   printf("kill");
-  // }
+void main()
+{
+  		/*
+		 * Set the signal handler
+		 */
+  
+  signal (SIGINT, handler);
+  signal (SIGSTOP, handler); 
 
-  // signal(sig, signal_handler);
+  while(1) { }       /* dummy wait */
+ 
 }
 
-int main()
+	/*
+	 * This the the signal handler for SIGINT signal 
+	 */
+
+void handler(int signum)
 {
-  printf("test\n");
-    // signal(SIGUSR1, signal_handler);
-    // signal(SIGUSR2, signal_handler);
-    signal(44, siger);
-
-    while (1) sleep(1);
-
-    return 0;
+  printf("\nOUCH....Signal #%d received\n",signum);
+  
+  /* To reset the signal handler to default , uncomment the following line */
+ 
+   signal(SIGINT, SIG_IGN ); 
+ 
+ /* To reset the signal handler to same handler if our system set it to default , uncomment the following line */
+ 
+ /* signal(SIGINT, handler ); */ 
 }
