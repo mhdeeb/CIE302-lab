@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <string.h>
-#include <unistd.h>
 #include <stdbool.h>
 #include "msgq.h"
 
@@ -30,11 +29,11 @@ void main()
   down = getDownQueue();
   message_s = msgs_default;
 
-  printf("C: %d\n", getpgrp());
   signal(SIGUSR1, handler);
   signal(SIGUSR2, handler);
 
   while(true) {
+    continue;
     if (add_time == -1 && (size = msgrcv(down, (void*)&message_t, sizeof(message_t), ADD_KERNAL_REQUEST, IPC_NOWAIT)) != -1) add_time = CLK + 3;
     else if (del_time == -1 && (size = msgrcv(down, (void*)&message_t, sizeof(message_t), DEL_KERNAL_REQUEST, IPC_NOWAIT)) != -1) del_time = CLK + 1;
   }
@@ -48,7 +47,7 @@ void handler(int sig)
     msgsnd(up, (void*)&message_s, sizeof(message_s), 0);
   } else if (sig == SIGUSR2) {
     CLK++;
-    printf("HELLO");
+    printf("DEBUG: DISK\n");
     if (CLK >= add_time) {
       if(set(message_t.mtext) == -1)
         message_s.mtype = ADD_DISK_FAILURE;

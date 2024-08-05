@@ -2,4 +2,4 @@
 
 make all
 cd dst
-./disk
+./main

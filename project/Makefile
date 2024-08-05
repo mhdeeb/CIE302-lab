@@ -1,15 +1,34 @@
+BINARY=bin
+OBJDIR=obj
+CODEDIRS=src
+INCDIRS=
+
 CC=gcc
+OPT=-O0
+DEPFLAGS=-MP -MD
+CFLAGS=-Wall -Wextra -g $(foreach D,$(INCDIRS),-I$(D)) $(OPT) $(DEPFLAGS)
 
-all: disk.o kernal.o process.o key
+CFILES=$(foreach D,$(CODEDIRS),$(wildcard $(D)/*.c))
+OBJECTS=$(patsubst %.c,$(OBJDIR)/%.o,$(CFILES))
+DEPFILES=$(patsubst %.c,%.d,$(CFILES))
 
-disk.o: src/disk.c
-	$(CC) src/disk.c -o dst/disk
+all: $(BINARY)
 
-kernal.o: src/kernal.c
-	$(CC) src/kernal.c -o dst/kernal
+$(BINARY): $(OBJECTS)
+	@$(CC) -o $@ $^
+	$(info $@ created.)
 
-process.o: src/process.c
-	$(CC) src/process.c -o dst/process
+%.o:%.c
+	@$(CC) $(CFLAGS) -c -o $@ $<
+	$(info $@ Created.)
 
-key dst/key:
-	touch dst/key
+clean:
+	@rm -rf $(BINARY) $(OBJECTS) $(DEPFILES)
+	$(info Cleaned)
+
+diff:
+	@git status
+	@git diff --stat
+
+-include $(DEPFILES)
+

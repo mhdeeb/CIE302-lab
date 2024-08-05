@@ -25,20 +25,20 @@ msgs message_s;
 
 void main()
 {
-  // up = getUpQueue();
-  // down = getDownQueue();
+  up = getUpQueue();
+  down = getDownQueue();
   message_s = msgs_default;
 
   signal(SIGUSR1, handler);
   signal(SIGUSR2, handler);
 
   while(true) {
-    killpg(getpgrp(), SIGUSR2); // want to print group id
-    printf("ID: %d\n", getpgrp());
-    sleep(1);
+    killpg(getpgrp(), SIGUSR2);
+    sleep(4);
   }
 }
 
 void handler(int sig)
 {
+  printf("DEBUG: KERNAL\n");
 }
