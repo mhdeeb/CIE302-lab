@@ -60,6 +60,7 @@ int main()
 void handler(int sig)
 {
   if (sig == SIGALRM) {
+    CTK++;
     killpg(getpgrp(), SIGUSR2);
     alarm(1);
   }

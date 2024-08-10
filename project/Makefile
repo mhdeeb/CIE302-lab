@@ -45,10 +45,15 @@ diff:
 	@git status
 	@git diff --stat
 
+push: all
+	@git add .
+	@git commit -m "WIP: Project"
+	@git push
+
 copy_assets:
 	@cp $(SRCDIR)/assets/* $(BINDIR)
 	$(info [Assets] copied.)
 
 -include $(DEPFILES)
 
-.PHONY: default all clean makedir diff copy_assets
+.PHONY: default all clean makedir diff push copy_assets
