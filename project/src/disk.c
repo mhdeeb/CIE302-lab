@@ -3,76 +3,59 @@
 #include <signal.h>
 #include <string.h>
 #include <stdbool.h>
+#include <sys/msg.h>
+#include <unistd.h>
 #include "msgq.h"
 
 #define LIMIT 10
 
 void handler(int sig);
-unsigned int availableSize();
-int set(char* data);
+bool set(char* data);
 bool del(int pos);
+void wait_s(unsigned int sec);
 
 int up;
 int down;
-int CLK = 0;
-int size;
-unsigned int add_time = -1;
-unsigned int del_time = -1;
+unsigned int CLK = 0;
+unsigned int size;
 char storage[LIMIT][BUFFER_SIZE];
 bool busy[LIMIT] = { false };
-msgt message_t;
-msgs message_s;
 
-void main()
+int main()
 {
   up = getUpQueue();
   down = getDownQueue();
-  message_s = msgs_default;
+  message msg;
 
   signal(SIGUSR1, handler);
   signal(SIGUSR2, handler);
 
   while(true) {
-    continue;
-    if (add_time == -1 && (size = msgrcv(down, (void*)&message_t, sizeof(message_t), ADD_KERNAL_REQUEST, IPC_NOWAIT)) != -1) add_time = CLK + 3;
-    else if (del_time == -1 && (size = msgrcv(down, (void*)&message_t, sizeof(message_t), DEL_KERNAL_REQUEST, IPC_NOWAIT)) != -1) del_time = CLK + 1;
+      size = msgrcv(down, &msg, sizeof(msg.content), DISK_ADDRESS, 0);
+      switch(msg.content.mtype) {
+        case ADD_REQUEST:
+          wait_s(3);
+          msg.address = KERNAL_ADDRESS; 
+          msg.content.mtype = DISK_ADDRESS;
+          msg.content.mtext[0] = set(msg.content.mtext) ? ADD_DISK_SUCCESS : ADD_DISK_FAILURE; 
+          msgsnd(down, &msg, sizeof(msg.content), 0);
+          break;
+        case DEL_REQUEST:
+          wait_s(1);
+          msg.address = KERNAL_ADDRESS; 
+          msg.content.mtype = DISK_ADDRESS;
+          msg.content.mtext[0] = del(msg.content.mtext[0]) ? DEL_DISK_SUCCESS : DEL_DISK_FAILURE; 
+          msgsnd(down, &msg, sizeof(msg.content), 0);
+          break;
+        default: break;
+      }
   }
+
+  return 0;
 }
 
-void handler(int sig)
-{
-  if (sig == SIGUSR1) {
-    message_s.mtype = SIZE_DISK_RESPONSE;
-    message_s.available = availableSize();
-    msgsnd(up, (void*)&message_s, sizeof(message_s), 0);
-  } else if (sig == SIGUSR2) {
-    CLK++;
-    printf("DEBUG: DISK\n");
-    if (CLK >= add_time) {
-      if(set(message_t.mtext) == -1)
-        message_s.mtype = ADD_DISK_FAILURE;
-      else 
-        message_s.mtype = ADD_DISK_SUCCESS;
-
-      msgsnd(down, (void*)&message_s, sizeof(message_s), 0);
-
-      add_time = -1;
-    }
-
-    if (CLK >= del_time) {
-      if (del((int)message_t.mtext[0]) != -1)
-        message_s.mtype = DEL_DISK_FAILURE;
-      else
-        message_s.mtype = DEL_DISK_SUCCESS;
-
-      msgsnd(down, (void*)&message_s, sizeof(message_s), 0);
-
-      del_time = -1;
-    }
-  }
-
-  signal(SIGUSR1, handler);
-  signal(SIGUSR2, handler); 
+void wait_s(unsigned int sec) {
+  sleep(sec);
 }
 
 unsigned int availableSize() {
@@ -84,16 +67,32 @@ unsigned int availableSize() {
   return sum;
 }
 
-int set(char* data) {
+void handler(int sig)
+{
+  if (sig == SIGUSR1) {
+    message msg;
+    msg.address = KERNAL_ADDRESS; 
+    msg.content.mtype = DISK_ADDRESS;
+    msg.content.mtext[0] = SIZE_DISK_RESPONSE;
+    msg.content.mtext[1] = availableSize();
+    msgsnd(up, &msg, sizeof(msg.content), 0);
+  } else if (sig == SIGUSR2)
+      CLK++;
+
+  signal(SIGUSR1, handler);
+  signal(SIGUSR2, handler); 
+}
+
+bool set(char* data) {
   for (int i = 0; i < LIMIT; i++) {
     if (!busy[i]) {
       busy[i] = true;
       strcpy(storage[i], data);
-      return i;
+      return true;
     }
   }
 
-  return -1;
+  return false;
 }
 
 bool del(int pos) {
