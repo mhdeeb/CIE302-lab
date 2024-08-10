@@ -32,19 +32,19 @@ int main()
 
   while(true) {
       size = msgrcv(down, &msg, sizeof(msg.content), DISK_ADDRESS, 0);
-      switch(msg.content.mtype) {
+      switch(msg.content.message_type) {
         case ADD_REQUEST:
           wait_s(3);
-          msg.address = KERNAL_ADDRESS; 
-          msg.content.mtype = DISK_ADDRESS;
-          msg.content.mtext[0] = set(msg.content.mtext) ? ADD_DISK_SUCCESS : ADD_DISK_FAILURE; 
+          msg.to = KERNAL_ADDRESS; 
+          msg.content.from = DISK_ADDRESS;
+          msg.content.message_type = set(msg.content.message_text) ? ADD_SUCCESS : ADD_FAILURE; 
           msgsnd(down, &msg, sizeof(msg.content), 0);
           break;
         case DEL_REQUEST:
           wait_s(1);
-          msg.address = KERNAL_ADDRESS; 
-          msg.content.mtype = DISK_ADDRESS;
-          msg.content.mtext[0] = del(msg.content.mtext[0]) ? DEL_DISK_SUCCESS : DEL_DISK_FAILURE; 
+          msg.to = KERNAL_ADDRESS; 
+          msg.content.from = DISK_ADDRESS;
+          msg.content.message_type = del(msg.content.message_text[0]) ? DEL_SUCCESS : DEL_FAILURE; 
           msgsnd(down, &msg, sizeof(msg.content), 0);
           break;
         default: break;
@@ -71,10 +71,10 @@ void handler(int sig)
 {
   if (sig == SIGUSR1) {
     message msg;
-    msg.address = KERNAL_ADDRESS; 
-    msg.content.mtype = DISK_ADDRESS;
-    msg.content.mtext[0] = SIZE_DISK_RESPONSE;
-    msg.content.mtext[1] = availableSize();
+    msg.to = KERNAL_ADDRESS; 
+    msg.content.from = DISK_ADDRESS;
+    msg.content.message_type = SIZE_RESPONSE;
+    msg.content.message_text[0] = availableSize();
     msgsnd(up, &msg, sizeof(msg.content), 0);
   } else if (sig == SIGUSR2)
       CLK++;

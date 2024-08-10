@@ -2,28 +2,25 @@
 
 #define BUFFER_SIZE 64
 
-#define SUCCESS 0
-#define FAILURE -1
-
 #define KERNAL_ADDRESS 0
 #define DISK_ADDRESS 1
 
-#define ADD_DISK_SUCCESS 1
-#define ADD_DISK_FAILURE 2
-#define DEL_DISK_SUCCESS 3
-#define DEL_DISK_FAILURE 4
-#define SIZE_DISK_RESPONSE 5
-
+#define ADD_SUCCESS 0
+#define DEL_SUCCESS 1
+#define ADD_FAILURE 2
+#define DEL_FAILURE 3
+#define SIZE_RESPONSE 4
 #define ADD_REQUEST 6
 #define DEL_REQUEST 7
 
 struct message_content {
-  char mtype;
-  char mtext[BUFFER_SIZE];
+  long from;
+  char message_type;
+  char message_text[BUFFER_SIZE];
 };
 
 struct message {
-  long address;
+  long to;
   struct message_content content;
 };
 

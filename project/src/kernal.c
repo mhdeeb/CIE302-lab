@@ -12,6 +12,7 @@
 void handler(int sig);
 int up;
 int down;
+int CTK = 0;
 
 int main()
 {
@@ -25,25 +26,25 @@ int main()
   while(true) {
     int size = msgrcv(up, &msg, sizeof(msg.content), KERNAL_ADDRESS, 0);
 
-    switch(msg.content.mtype) {
+    switch(msg.content.from) {
       case DISK_ADDRESS:
-        switch (msg.content.mtext[0]) {
-          case ADD_DISK_SUCCESS:
+        switch (msg.content.message_type) {
+          case ADD_SUCCESS:
             break;
-          case ADD_DISK_FAILURE:
+          case ADD_FAILURE:
             break;
-          case DEL_DISK_SUCCESS:
+          case DEL_SUCCESS:
             break;
-          case DEL_DISK_FAILURE:
+          case DEL_FAILURE:
             break;
-          case SIZE_DISK_RESPONSE:
-            msg.content.mtext[1];
+          case SIZE_RESPONSE:
+            msg.content.message_text;
             break;
           default: break;
         }
         break;
       default:
-        switch (msg.content.mtext[0]) {
+        switch (msg.content.message_type) {
           case ADD_REQUEST:
             break;
           case DEL_REQUEST:

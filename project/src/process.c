@@ -10,8 +10,10 @@
 #define LIMIT 10
 
 void handler(int sig);
+void wait_clk(int u);
 int up;
 int down;
+int CLK = 0;
 
 int main(int argc, char** argv)
 {
@@ -19,40 +21,52 @@ int main(int argc, char** argv)
   up = getUpQueue();
   down = getDownQueue();
 
-  while(true) {
-//    int size = msgrcv(up, &msg, sizeof(msg.content), KERNAL_ADDRESS, 0);
-//
-//    switch(msg.content.mtype) {
-//      case DISK_ADDRESS:
-//        switch (msg.content.mtext[0]) {
-//          case ADD_DISK_SUCCESS:
-//            break;
-//          case ADD_DISK_FAILURE:
-//            break;
-//          case DEL_DISK_SUCCESS:
-//            break;
-//          case DEL_DISK_FAILURE:
-//            break;
-//          case SIZE_DISK_RESPONSE:
-//            msg.content.mtext[1];
-//            break;
-//          default: break;
-//        }
-//        break;
-//      default:
-//        switch (msg.content.mtext[0]) {
-//          case ADD_REQUEST:
-//            break;
-//          case DEL_REQUEST:
-//            break;
-//          default: break;
-//        }
-//        break;
-//    }
+  signal(SIGUSR2, handler);
+
+  FILE* file = fopen(argv[0], "r");
+
+  if (file == NULL) {
+      printf("no such file.");
+      return 0;
   }
+
+  int time;
+  char command[4];
+  char value[BUFFER_SIZE];
+  char line[255];
+
+  while(fgets(line, sizeof line, file) != NULL) {
+    if (3 != sscanf(line,"%d %s \"%[^\" \n\t]", &time, command, value))
+      break;
+
+    message msg;
+
+    msg.to = KERNAL_ADDRESS;
+    msg.content.from = getpid();
+
+    if (!strcmp(command, "ADD")) {
+      msg.content.message_type = ADD_REQUEST;
+      strcpy(msg.content.message_text, value);
+    }
+    else if (!strcmp(command, "DEL")) {
+      msg.content.message_type = DEL_REQUEST;
+      msg.content.message_text[0] = atoi(value);
+    }
+    
+    wait_clk(time);
+    msgsnd(up, &msg, sizeof msg.content, 0);
+    msgrcv(down, &msg, sizeof msg.content, getpid(), 0);
+  }
+
   return 0;
 }
 
 void handler(int sig)
 {
+  if (sig == SIGUSR2)
+    CLK++;
+}
+
+void wait_clk(int u) {
+  while(CLK < u);
 }
