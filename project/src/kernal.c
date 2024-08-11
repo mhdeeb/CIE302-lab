@@ -12,7 +12,7 @@
 void handler(int sig);
 int up;
 int down;
-int CTK = 0;
+int CLK = 0;
 
 int main()
 {
@@ -21,24 +21,32 @@ int main()
   down = getDownQueue();
 
   signal(SIGALRM, handler);
+  signal(SIGUSR1, SIG_IGN);
+  signal(SIGUSR2, SIG_IGN);
   alarm(1);
 
   while(true) {
     int size = msgrcv(up, &msg, sizeof(msg.content), KERNAL_ADDRESS, 0);
+    if (size == -1)continue;
 
     switch(msg.content.from) {
       case DISK_ADDRESS:
         switch (msg.content.message_type) {
           case ADD_SUCCESS:
+            printf("At time = %d, ADD_SUCCESS\n", CLK);
             break;
           case ADD_FAILURE:
+            printf("At time = %d, ADD_FAILURE\n", CLK);
             break;
           case DEL_SUCCESS:
+            printf("At time = %d, DEL_SUCCESS\n", CLK);
             break;
           case DEL_FAILURE:
+            printf("At time = %d, DEL_FAILURE\n", CLK);
             break;
           case SIZE_RESPONSE:
-            msg.content.message_text;
+            printf("At time = %d, SIZE_RESPONSE\n", CLK);
+            msg.content.message_text[0];
             break;
           default: break;
         }
@@ -46,8 +54,10 @@ int main()
       default:
         switch (msg.content.message_type) {
           case ADD_REQUEST:
+            printf("At time = %d, request to add \"%s\" from %d\n", CLK, msg.content.message_text, msg.content.from);
             break;
           case DEL_REQUEST:
+            printf("At time = %d, request to delete %s from %d\n", CLK, msg.content.message_text, msg.content.from);
             break;
           default: break;
         }
@@ -60,10 +70,12 @@ int main()
 void handler(int sig)
 {
   if (sig == SIGALRM) {
-    CTK++;
+    CLK++;
     killpg(getpgrp(), SIGUSR2);
     alarm(1);
   }
 
   signal(SIGALRM, handler);
+  signal(SIGUSR1, SIG_IGN);
+  signal(SIGUSR2, SIG_IGN);
 }

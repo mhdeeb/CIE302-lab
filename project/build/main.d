@@ -1,9 +1,9 @@
-build/main.o: src/main.c /usr/include/stdc-predef.h /usr/include/stdlib.h \
- /usr/include/bits/libc-header-start.h /usr/include/features.h \
- /usr/include/features-time64.h /usr/include/bits/wordsize.h \
- /usr/include/bits/timesize.h /usr/include/sys/cdefs.h \
- /usr/include/bits/long-double.h /usr/include/gnu/stubs.h \
- /usr/include/gnu/stubs-64.h \
+build/main.o: src/main.c /usr/include/stdc-predef.h src/msgq.h \
+ /usr/include/stdlib.h /usr/include/bits/libc-header-start.h \
+ /usr/include/features.h /usr/include/features-time64.h \
+ /usr/include/bits/wordsize.h /usr/include/bits/timesize.h \
+ /usr/include/sys/cdefs.h /usr/include/bits/long-double.h \
+ /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/14.1.1/include/stddef.h \
  /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
  /usr/include/bits/floatn.h /usr/include/bits/floatn-common.h \
@@ -45,6 +45,7 @@ build/main.o: src/main.c /usr/include/stdc-predef.h /usr/include/stdlib.h \
  /usr/include/bits/confname.h /usr/include/bits/getopt_posix.h \
  /usr/include/bits/getopt_core.h /usr/include/bits/unistd_ext.h
 /usr/include/stdc-predef.h:
+src/msgq.h:
 /usr/include/stdlib.h:
 /usr/include/bits/libc-header-start.h:
 /usr/include/features.h:

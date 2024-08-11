@@ -32,6 +32,8 @@ int main()
 
   while(true) {
       size = msgrcv(down, &msg, sizeof(msg.content), DISK_ADDRESS, 0);
+      if (size == -1)continue;
+
       switch(msg.content.message_type) {
         case ADD_REQUEST:
           wait_s(3);
@@ -49,13 +51,16 @@ int main()
           break;
         default: break;
       }
+      for (int i = 0; i < LIMIT; i++)
+        printf("%s\n", storage[i]);
   }
 
   return 0;
 }
 
 void wait_s(unsigned int sec) {
-  sleep(sec);
+  int initial_time = CLK;
+  while (initial_time + sec > CLK);
 }
 
 unsigned int availableSize() {

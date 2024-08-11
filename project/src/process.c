@@ -21,6 +21,7 @@ int main(int argc, char** argv)
   up = getUpQueue();
   down = getDownQueue();
 
+  signal(SIGUSR1, SIG_IGN);
   signal(SIGUSR2, handler);
 
   FILE* file = fopen(argv[0], "r");
@@ -34,10 +35,8 @@ int main(int argc, char** argv)
   char command[4];
   char value[BUFFER_SIZE];
   char line[255];
-
   while(fgets(line, sizeof line, file) != NULL) {
-    if (3 != sscanf(line,"%d %s \"%[^\" \n\t]", &time, command, value))
-      break;
+    if (3 != sscanf(line,"%d %s%*[\" ]%[^\"\n]", &time, command, value)) break;
 
     message msg;
 
@@ -46,16 +45,15 @@ int main(int argc, char** argv)
 
     if (!strcmp(command, "ADD")) {
       msg.content.message_type = ADD_REQUEST;
-      strcpy(msg.content.message_text, value);
     }
     else if (!strcmp(command, "DEL")) {
       msg.content.message_type = DEL_REQUEST;
-      msg.content.message_text[0] = atoi(value);
-    }
+    } else continue;
     
+    strcpy(msg.content.message_text, value);
     wait_clk(time);
     msgsnd(up, &msg, sizeof msg.content, 0);
-    msgrcv(down, &msg, sizeof msg.content, getpid(), 0);
+    while (-1 == msgrcv(down, &msg, sizeof msg.content, getpid(), 0));
   }
 
   return 0;
@@ -65,6 +63,9 @@ void handler(int sig)
 {
   if (sig == SIGUSR2)
     CLK++;
+
+  signal(SIGUSR1, SIG_IGN);
+  signal(SIGUSR2, handler);
 }
 
 void wait_clk(int u) {

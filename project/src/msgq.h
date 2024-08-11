@@ -2,8 +2,8 @@
 
 #define BUFFER_SIZE 64
 
-#define KERNAL_ADDRESS 0
-#define DISK_ADDRESS 1
+#define KERNAL_ADDRESS 2
+#define DISK_ADDRESS 3
 
 #define ADD_SUCCESS 0
 #define DEL_SUCCESS 1
