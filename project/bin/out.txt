@@ -1,0 +1,15 @@
+At time = 2, request to add "hello" from 20008
+At time = 2, sent status request to Disk
+At time = 2, Disk status = 10 empty slots
+At time = 5, request to add "hi there" from 20008
+At time = 5, sent status request to Disk
+At time = 5, Disk status = 10 empty slots
+At time = 5, ADD_SUCCESS
+At time = 8, ADD_SUCCESS
+At time = 9, request to add "hello" from 20009
+At time = 9, sent status request to Disk
+At time = 9, Disk status = 8 empty slots
+At time = 12, ADD_SUCCESS
+At time = 12, request to delete 0 from 20010
+At time = 12, request to delete 0 from 20010
+At time = 13, DEL_SUCCESS

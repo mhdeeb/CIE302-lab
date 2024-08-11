@@ -42,14 +42,14 @@ build/kernal.o: src/kernal.c /usr/include/stdc-predef.h \
  /usr/include/bits/types/struct_sigstack.h /usr/include/bits/sigthread.h \
  /usr/include/bits/signal_ext.h /usr/include/string.h \
  /usr/include/bits/types/locale_t.h /usr/include/bits/types/__locale_t.h \
- /usr/include/strings.h /usr/include/unistd.h \
+ /usr/include/strings.h /usr/include/sys/ipc.h \
+ /usr/include/bits/ipctypes.h /usr/include/bits/ipc.h \
+ /usr/include/bits/ipc-perm.h /usr/include/unistd.h \
  /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
  /usr/include/bits/confname.h /usr/include/bits/getopt_posix.h \
  /usr/include/bits/getopt_core.h /usr/include/bits/unistd_ext.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/14.1.1/include/stdbool.h \
- /usr/include/sys/msg.h /usr/include/sys/ipc.h \
- /usr/include/bits/ipctypes.h /usr/include/bits/ipc.h \
- /usr/include/bits/ipc-perm.h /usr/include/bits/msq.h \
+ /usr/include/sys/msg.h /usr/include/bits/msq.h \
  /usr/include/bits/types/struct_msqid_ds.h \
  /usr/include/bits/types/struct_msqid64_ds.h src/msgq.h
 /usr/include/stdc-predef.h:
@@ -131,6 +131,10 @@ build/kernal.o: src/kernal.c /usr/include/stdc-predef.h \
 /usr/include/bits/types/locale_t.h:
 /usr/include/bits/types/__locale_t.h:
 /usr/include/strings.h:
+/usr/include/sys/ipc.h:
+/usr/include/bits/ipctypes.h:
+/usr/include/bits/ipc.h:
+/usr/include/bits/ipc-perm.h:
 /usr/include/unistd.h:
 /usr/include/bits/posix_opt.h:
 /usr/include/bits/environments.h:
@@ -140,10 +144,6 @@ build/kernal.o: src/kernal.c /usr/include/stdc-predef.h \
 /usr/include/bits/unistd_ext.h:
 /usr/lib/gcc/x86_64-pc-linux-gnu/14.1.1/include/stdbool.h:
 /usr/include/sys/msg.h:
-/usr/include/sys/ipc.h:
-/usr/include/bits/ipctypes.h:
-/usr/include/bits/ipc.h:
-/usr/include/bits/ipc-perm.h:
 /usr/include/bits/msq.h:
 /usr/include/bits/types/struct_msqid_ds.h:
 /usr/include/bits/types/struct_msqid64_ds.h:

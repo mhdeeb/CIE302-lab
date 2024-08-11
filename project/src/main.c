@@ -10,7 +10,7 @@ int processCount = 3;
 
 void handler(int sig) {
   if (sig == SIGINT)
-    killpg(getpgid(getpid()), SIGKILL);
+    killpg(getpgrp(), SIGINT);
 
   signal(SIGUSR1, SIG_IGN);
   signal(SIGUSR2, SIG_IGN);

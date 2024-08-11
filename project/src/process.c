@@ -17,14 +17,17 @@ int CLK = 0;
 
 int main(int argc, char** argv)
 {
-  message msg;
+  if (argc < 1) return -1;
+  int argvSelect = 0;
+  if (argc > 1) argvSelect = 1;
+
   up = getUpQueue();
   down = getDownQueue();
 
   signal(SIGUSR1, SIG_IGN);
   signal(SIGUSR2, handler);
 
-  FILE* file = fopen(argv[0], "r");
+  FILE* file = fopen(argv[argvSelect], "r");
 
   if (file == NULL) {
       printf("no such file.");
@@ -40,8 +43,9 @@ int main(int argc, char** argv)
 
     message msg;
 
+    msg.content.pid = getpid();
     msg.to = KERNAL_ADDRESS;
-    msg.content.from = getpid();
+    msg.content.from = PROCESS_ADDRESS;
 
     if (!strcmp(command, "ADD")) {
       msg.content.message_type = ADD_REQUEST;
@@ -54,6 +58,7 @@ int main(int argc, char** argv)
     wait_clk(time);
     msgsnd(up, &msg, sizeof msg.content, 0);
     while (-1 == msgrcv(down, &msg, sizeof msg.content, getpid(), 0));
+    printf("Process %d recieved %d\n", getpid(), msg.content.message_type);
   }
 
   return 0;

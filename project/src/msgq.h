@@ -4,6 +4,7 @@
 
 #define KERNAL_ADDRESS 2
 #define DISK_ADDRESS 3
+#define PROCESS_ADDRESS 4
 
 #define ADD_SUCCESS 0
 #define DEL_SUCCESS 1
@@ -15,6 +16,7 @@
 
 struct message_content {
   long from;
+  long pid;
   char message_type;
   char message_text[BUFFER_SIZE];
 };
